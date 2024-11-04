@@ -60,21 +60,41 @@ CAMLprim value caml_cellToLatLng(value caml_h3) {
     CAMLreturn(ret);
 }
 
+CAMLprim value conv(char const *arrayval) {
+    CAMLparam0 ();
+    CAMLlocal1(ret);
+    LatLng *coord = (LatLng*)arrayval;
+    ret = caml_alloc_tuple(2);
+    Store_double_field(ret, 0, coord->lat);
+    Store_double_field(ret, 1, coord->lng);
+    CAMLreturn(ret);
+}
+
 CAMLprim value caml_cellToBoundary(value caml_h3) {
     // TODO: return err
     CAMLparam1(caml_h3);
-    CAMLlocal3(ret, arr, this_tup);
+    CAMLlocal2(ret, arr);
     CellBoundary gb;
     H3Error err = cellToBoundary(Int64_val(caml_h3), &gb);
     ret = caml_alloc_tuple(2);
-    arr = caml_alloc(gb.numVerts, Abstract_tag);
-    for (int i = 0; i < gb.numVerts; i++) {
-        this_tup = caml_alloc_tuple(2);
-        Store_double_field(this_tup, 0, gb.verts[i].lat);
-        Store_double_field(this_tup, 1, gb.verts[i].lng);
-        Field(arr, i) = this_tup;
+
+    LatLng* pro[MAX_CELL_BNDRY_VERTS];
+
+    if (err == E_SUCCESS) {
+        for (int i = 0; i < gb.numVerts; i++) {
+            pro[i] = &(gb.verts[i]);
+        }
+        for (int i = gb.numVerts; i < MAX_CELL_BNDRY_VERTS; i++) {
+            pro[i] = NULL;
+        }
+    } else {
+        for (int i = 0; i < MAX_CELL_BNDRY_VERTS; i++) {
+            pro[i] = NULL;
+        }
     }
-    Field(ret, 0) = Val_int(gb.numVerts);
+    arr = caml_alloc_array(conv, (const char **)(&pro));
+
+    Field(ret, 0) = err == E_SUCCESS ? Val_int(gb.numVerts) : 0;
     Field(ret, 1) = arr;
     CAMLreturn(ret);
 }
