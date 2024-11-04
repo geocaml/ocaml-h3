@@ -1,19 +1,19 @@
 
 type h3_index = int64
 
-type geo_coord = {
+type lat_lng = {
     lat: float;
     lon: float
 }
 
-type geo_boundary = {
+type cell_boundary = {
     num_verts: int;
-    verts: geo_coord array
+    verts: lat_lng array
 }
 
 type geo_fence = {
     num_verts : int;
-    verts : geo_coord array
+    verts : lat_lng array
 }
 
 type geo_polygon = {
@@ -24,22 +24,19 @@ type geo_polygon = {
 
 external degs_to_rads : float -> float = "caml_degsToRads"
 external rads_to_degs : float -> float = "caml_radsToDegs"
-external h3_is_valid : h3_index -> int = "caml_h3IsValid"
-external geo_to_h3 : float -> float -> int -> h3_index = "caml_geoToH3"
-external h3_to_geo : h3_index -> float * float = "caml_h3ToGeo"
-external h3_to_geo_boundary : h3_index -> geo_boundary = "caml_h3ToGeoBoundary"
-external max_kring_size : int -> int = "caml_maxKringSize"
-external k_ring : h3_index -> int -> h3_index array = "caml_kRing"
-external k_ring_distances : h3_index -> int -> h3_index array * int array = "caml_kRingDistances"
-external hex_range : h3_index -> int -> h3_index = "caml_hexRange"
-external hex_ring_distances : h3_index -> int -> h3_index array * int array * int = "caml_hexRangeDistances"
-external hex_ranges : h3_index array -> int -> int -> h3_index array * int = "caml_hexRanges"
-external hex_ring : h3_index -> int -> h3_index array = "caml_hexRing"
-external h3_get_resolution : h3_index -> int = "caml_h3GetResolution"
-external h3_get_base_cell : h3_index -> int = "caml_h3GetBaseCell"
+external is_valid_cell : h3_index -> int = "caml_isValidCell"
+external lat_lng_to_cell : float -> float -> int -> h3_index = "caml_latLngToCell"
+external cell_to_lat_lng : h3_index -> float * float = "caml_cellToLatLng"
+external cell_to_boundary : h3_index -> cell_boundary = "caml_cellToBoundary"
+external max_grid_disk_size : int -> int64 = "caml_maxGridDiskSize"
+external grid_disk : h3_index -> int -> h3_index array = "caml_gridDisk"
+external grid_disk_distances : h3_index -> int -> h3_index array * int array = "caml_gridDiskDistances"
+external get_resolution : h3_index -> int = "caml_getResolution"
+external get_base_cell_number : h3_index -> int = "caml_getBaseCellNumber"
 external string_to_h3 : string -> h3_index = "caml_stringToH3"
-external hex_area_km2 : int -> float = "caml_hexAreaKm2"
-external h3_indexes_are_neighbors : h3_index -> h3_index -> int = "caml_h3IndexesAreNeighbors"
+external get_hexagon_area_avg_km2 : int -> float = "caml_getHexagonAreaAvgKm2"
+external cell_area_km2 : h3_index -> float = "caml_cellAreaKm2"
+external are_neighbor_cells : h3_index -> h3_index -> int = "caml_areNeighborCells"
 
-let h3_of_geo_coord gc =
-    geo_to_h3 (degs_to_rads gc.lat) (degs_to_rads gc.lon)
+let geo_coord_to_cell gc =
+    lat_lng_to_cell (degs_to_rads gc.lat) (degs_to_rads gc.lon)

@@ -21,43 +21,57 @@ CAMLprim value caml_radsToDegs(value caml_radians) {
     return caml_copy_double(radsToDegs(Double_val(caml_radians)));
 }
 
-CAMLprim value caml_hexAreaKm2(value caml_res) {
-    return caml_copy_double(hexAreaKm2(Int_val(caml_res)));
+CAMLprim value caml_getHexagonAreaAvgKm2(value caml_res) {
+    // TODO: return err
+    double out;
+    H3Error err = getHexagonAreaAvgKm2(Int_val(caml_res), &out);
+    return caml_copy_double(out);
 }
 
-CAMLprim value caml_h3IsValid(value caml_h3) {
-    return Val_int(h3IsValid(Int64_val(caml_h3)));
+CAMLprim value caml_cellAreaKm2(value caml_h3) {
+    // TODO: return err
+    double out;
+    H3Error err = cellAreaKm2(Int64_val(caml_h3), &out);
+    return caml_copy_double(out);
 }
 
-CAMLprim value caml_geoToH3(value caml_lat, value caml_lon, value caml_res) {
-    GeoCoord geo_coord = {.lat = Double_val(caml_lat),
-                          .lon = Double_val(caml_lon)};
-    uint64_t res = geoToH3(&geo_coord, Int_val(caml_res));
-    return caml_copy_int64(res);
+CAMLprim value caml_isValidCell(value caml_h3) {
+    return Val_int(isValidCell(Int64_val(caml_h3)));
 }
 
-CAMLprim value caml_h3ToGeo(value caml_h3) {
+CAMLprim value caml_latLngToCell(value caml_lat, value caml_lon, value caml_res) {
+    // TODO: return err
+    H3Index out;
+    LatLng geo_coord = {.lat = Double_val(caml_lat),
+                          .lng = Double_val(caml_lon)};
+    H3Error err = latLngToCell(&geo_coord, Int_val(caml_res), &out);
+    return caml_copy_int64(out);
+}
+
+CAMLprim value caml_cellToLatLng(value caml_h3) {
+    // TODO: return err
     CAMLparam1(caml_h3);
     CAMLlocal1(ret);
-    GeoCoord geo_coord = {.lat = 0.0, .lon = 0.0};
-    h3ToGeo(Int64_val(caml_h3), &geo_coord);
+    LatLng geo_coord = {.lat = 0.0, .lng = 0.0};
+    H3Error err = cellToLatLng(Int64_val(caml_h3), &geo_coord);
     ret = caml_alloc_tuple(2);
     Field(ret, 0) = caml_copy_double(geo_coord.lat);
-    Field(ret, 1) = caml_copy_double(geo_coord.lon);
+    Field(ret, 1) = caml_copy_double(geo_coord.lng);
     CAMLreturn(ret);
 }
 
-CAMLprim value caml_h3ToGeoBoundary(value caml_h3) {
+CAMLprim value caml_cellToBoundary(value caml_h3) {
+    // TODO: return err
     CAMLparam1(caml_h3);
     CAMLlocal3(ret, arr, this_tup);
-    GeoBoundary gb;
-    h3ToGeoBoundary(Int64_val(caml_h3), &gb);
+    CellBoundary gb;
+    H3Error err = cellToBoundary(Int64_val(caml_h3), &gb);
     ret = caml_alloc_tuple(2);
     arr = caml_alloc(gb.numVerts, Abstract_tag);
     for (int i = 0; i < gb.numVerts; i++) {
         this_tup = caml_alloc_tuple(2);
         Store_double_field(this_tup, 0, gb.verts[i].lat);
-        Store_double_field(this_tup, 1, gb.verts[i].lon);
+        Store_double_field(this_tup, 1, gb.verts[i].lng);
         Field(arr, i) = this_tup;
     }
     Field(ret, 0) = Val_int(gb.numVerts);
@@ -65,36 +79,49 @@ CAMLprim value caml_h3ToGeoBoundary(value caml_h3) {
     CAMLreturn(ret);
 }
 
-CAMLprim value caml_maxKringSize(value caml_k) {
-    return Val_int(maxKringSize(Int_val(caml_k)));
+CAMLprim value caml_maxGridDiskSize(value caml_k) {
+    // TODO: return err
+    int64_t out;
+    H3Error err = maxGridDiskSize(Int_val(caml_k), &out);
+    return caml_copy_int64(out);
 }
 
-CAMLprim value caml_kRing(value caml_h3, value caml_k) {
+CAMLprim value caml_gridDisk(value caml_h3, value caml_k) {
+    // TODO: return err
     CAMLparam2(caml_h3, caml_k);
     CAMLlocal1(ret);
     int k = Int_val(caml_k);
-    H3Index* rings = (H3Index*)calloc(k, sizeof(H3Index));
-    kRing(Int64_val(caml_h3), k, rings);
-    ret = caml_alloc_tuple(k);
-    for (int i = 0; i < k; i++) {
+
+    int64_t count;
+    H3Error err = maxGridDiskSize(k, &count);
+
+    H3Index* rings = (H3Index*)calloc(count, sizeof(H3Index));
+    err = gridDisk(Int64_val(caml_h3), k, rings);
+    ret = caml_alloc_tuple(count);
+    for (int i = 0; i < count; i++) {
         Store_field(ret, i, caml_copy_int64(rings[i]));
     }
     free(rings);
     CAMLreturn(ret);
 }
 
-CAMLprim value caml_kRingDistances(value caml_h3, value caml_k) {
+CAMLprim value caml_gridDiskDistances(value caml_h3, value caml_k) {
+    // TODO: return err
     CAMLparam2(caml_h3, caml_k);
     CAMLlocal3(ret, neigh, dists);
     int k = Int_val(caml_k);
-    H3Index* rings = (H3Index*)calloc(k, sizeof(H3Index));
-    int* distances = (int*)calloc(k, sizeof(int));
-    kRingDistances(Int64_val(caml_h3), k, rings, distances);
+
+    int64_t count;
+    H3Error err = maxGridDiskSize(k, &count);
+
+    H3Index* rings = (H3Index*)calloc(count, sizeof(H3Index));
+    int* distances = (int*)calloc(count, sizeof(int));
+    err = gridDiskDistances(Int64_val(caml_h3), k, rings, distances);
     ret = caml_alloc_tuple(2);
-    neigh = caml_alloc_tuple(k);
-    dists = caml_alloc_tuple(k);
+    neigh = caml_alloc_tuple(count);
+    dists = caml_alloc_tuple(count);
     ret = caml_alloc(k, Abstract_tag);
-    for (int i = 0; i < k; i++) {
+    for (int i = 0; i < count; i++) {
         Field(neigh, i) = caml_copy_int64(rings[i]);
         Field(dists, i) = distances[i];
     }
@@ -105,103 +132,24 @@ CAMLprim value caml_kRingDistances(value caml_h3, value caml_k) {
     CAMLreturn(ret);
 }
 
-CAMLprim value caml_hexRange(value v_origin, value v_k) {
-    H3Index out;
-    int res = hexRange(Int64_val(v_origin), Int_val(v_k), &out);
-    return caml_copy_int64(out);
+CAMLprim value caml_getResolution(value v_h) {
+    return Val_int(getResolution(Int64_val(v_h)));
 }
 
-CAMLprim value caml_hexRangeDistances(value v_origin, value v_k) {
-    CAMLparam2(v_origin, v_k);
-    CAMLlocal3(ret, neigh, dists);
-    int k = Int_val(v_k);
-    H3Index* rings = (H3Index*)calloc(k, sizeof(H3Index));
-    int* distances = (int*)calloc(k, sizeof(int));
-    int res = hexRangeDistances(Int64_val(v_origin), k, rings, distances);
-    ret = caml_alloc_tuple(3);
-    neigh = caml_alloc_tuple(k);
-    dists = caml_alloc_tuple(k);
-    ret = caml_alloc(k, Abstract_tag);
-    for (int i = 0; i < k; i++) {
-        Field(neigh, i) = caml_copy_int64(rings[i]);
-        Field(dists, i) = distances[i];
-    }
-    Field(ret, 0) = neigh;
-    Field(ret, 1) = dists;
-    Field(ret, 2) = res;
-    free(rings);
-    free(distances);
-    CAMLreturn(ret);
-}
-
-CAMLprim value caml_hexRanges(value v_h3Set, value v_length, value v_k) {
-    CAMLparam3(v_h3Set, v_length, v_k);
-    CAMLlocal2(ret_array, ret);
-    int length = Int_val(v_length);
-    int k = Int_val(v_k);
-    H3Index* out = (H3Index*)calloc(k, sizeof(H3Index));
-    int res = hexRanges((H3Index*)Int64_val(v_h3Set), length, k, out);
-    ret_array = caml_alloc_tuple(k);
-    ret = caml_alloc_tuple(2);
-    for (int i = 0; i < k; i++) {
-        Field(ret_array, i) = caml_copy_int64(out[i]);
-    }
-    Field(ret, 0) = ret_array;
-    Field(ret, 1) = res;
-    free(out);
-    CAMLreturn(ret);
-}
-
-CAMLprim value caml_hexRing(value v_origin, value v_k) {
-    CAMLparam2(v_origin, v_k);
-    CAMLlocal2(ret_array, ret);
-    int k = Int_val(v_k);
-    H3Index* out = (H3Index*)calloc(k, sizeof(H3Index));
-    int res = hexRing(Int64_val(v_origin), Int_val(v_k), out);
-    ret_array = caml_alloc_tuple(k);
-    ret = caml_alloc_tuple(2);
-    for (int i = 0; i < k; i++) {
-        Field(ret_array, i) = caml_copy_int64(out[i]);
-    }
-    Field(ret, 0) = ret_array;
-    Field(ret, 1) = res;
-    free(out);
-    CAMLreturn(ret);
-}
-
-/*
-CAMLprim value caml_maxPolyfillSize(value v_geoPolygon, value v_res) {
-    CAMLparam2(v_geoPolygon, v_res);
-    GeoFence geoFence;
-    value v_geoFence = Field(v_geoPolygon, 0);
-    geoFence.numVerts = Int_val(Field(v_geoFence, 0));
-    GeoCoord* verts = (GeoCoord*)calloc(geoFence.numVerts, sizeof(GeoCoord));
-    int i, j;
-    for (i = 0; i < geoFence.numVerts; i++) {
-        verts[i * 2] = Double_val(Field(Field(v_geoFence, i), 0));
-        verts[i * 2 + 1] = Double_val(Field(Field(v_geoFence, i), 1));
-    }
-    GeoPolygon geoPolygon;
-    geoPolygon.numHoles = Int_val(Field(v_geoPolygon, 1));
-    free(verts);
-}
-*/
-
-CAMLprim value caml_h3GetResolution(value v_h) {
-    return Val_int(h3GetResolution(Int64_val(v_h)));
-}
-
-CAMLprim value caml_h3GetBaseCell(value v_h) {
-    return Val_int(h3GetBaseCell(Int64_val(v_h)));
+CAMLprim value caml_getBaseCellNumber(value v_h) {
+    return Val_int(getBaseCellNumber(Int64_val(v_h)));
 }
 
 CAMLprim value caml_stringToH3(value v_str) {
-    return caml_copy_int64(stringToH3(String_val(v_str)));
+    // TODO: return err
+    H3Index idx;
+    H3Error err = stringToH3(String_val(v_str), &idx);
+    return caml_copy_int64(idx);
 }
 
-// CAMLprim value caml_h3ToString(value v_h) {
-
-CAMLprim value caml_h3IndexesAreNeighbors(value v_origin, value v_destination) {
-    return Val_int(
-        h3IndexesAreNeighbors(Int64_val(v_origin), Int64_val(v_destination)));
+CAMLprim value caml_areNeighborCells(value v_origin, value v_destination) {
+    // TODO: return err
+    int res;
+    H3Error err = areNeighborCells(Int64_val(v_origin), Int64_val(v_destination), &res);
+    return Val_int(res);
 }

@@ -1,0 +1,7 @@
+(library
+ (public_name h3)
+ (name h3)
+ (foreign_stubs (language c) (names h3_stubs))
+ (c_library_flags
+   ( -lh3 ))
+)
