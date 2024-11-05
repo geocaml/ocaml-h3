@@ -14,46 +14,62 @@
 #include <caml/mlvalues.h>
 
 CAMLprim value caml_degsToRads(value caml_degrees) {
-    return caml_copy_double(degsToRads(Double_val(caml_degrees)));
+    CAMLparam1(caml_degrees);
+    CAMLreturn(caml_copy_double(degsToRads(Double_val(caml_degrees))));
 }
 
 CAMLprim value caml_radsToDegs(value caml_radians) {
-    return caml_copy_double(radsToDegs(Double_val(caml_radians)));
+    CAMLparam1(caml_radians);
+    CAMLreturn(caml_copy_double(radsToDegs(Double_val(caml_radians))));
 }
 
 CAMLprim value caml_getHexagonAreaAvgKm2(value caml_res) {
-    // TODO: return err
+    CAMLparam1(caml_res);
     double out;
     H3Error err = getHexagonAreaAvgKm2(Int_val(caml_res), &out);
-    return caml_copy_double(out);
+    if (E_SUCCESS != err) {
+        caml_failwith_value(caml_copy_int64(err));
+    }
+    CAMLreturn(caml_copy_double(out));
 }
 
 CAMLprim value caml_cellAreaKm2(value caml_h3) {
-    // TODO: return err
+    CAMLparam1(caml_h3);
     double out;
     H3Error err = cellAreaKm2(Int64_val(caml_h3), &out);
-    return caml_copy_double(out);
+    if (E_SUCCESS != err) {
+        caml_failwith_value(caml_copy_int64(err));
+    }
+    CAMLreturn(caml_copy_double(out));
 }
 
 CAMLprim value caml_isValidCell(value caml_h3) {
-    return Val_int(isValidCell(Int64_val(caml_h3)));
+    CAMLparam1(caml_h3);
+    CAMLreturn(Val_int(isValidCell(Int64_val(caml_h3))));
 }
 
 CAMLprim value caml_latLngToCell(value caml_lat, value caml_lon, value caml_res) {
-    // TODO: return err
+    CAMLparam3(caml_lat, caml_lon, caml_res);
     H3Index out;
-    LatLng geo_coord = {.lat = Double_val(caml_lat),
-                          .lng = Double_val(caml_lon)};
+    LatLng geo_coord = {
+        .lat = Double_val(caml_lat),
+        .lng = Double_val(caml_lon)
+    };
     H3Error err = latLngToCell(&geo_coord, Int_val(caml_res), &out);
-    return caml_copy_int64(out);
+    if (E_SUCCESS != err) {
+        caml_failwith_value(caml_copy_int64(err));
+    }
+    CAMLreturn(caml_copy_int64(out));
 }
 
 CAMLprim value caml_cellToLatLng(value caml_h3) {
-    // TODO: return err
     CAMLparam1(caml_h3);
     CAMLlocal1(ret);
     LatLng geo_coord = {.lat = 0.0, .lng = 0.0};
     H3Error err = cellToLatLng(Int64_val(caml_h3), &geo_coord);
+    if (E_SUCCESS != err) {
+        caml_failwith_value(caml_copy_int64(err));
+    }
     ret = caml_alloc_tuple(2);
     Field(ret, 0) = caml_copy_double(geo_coord.lat);
     Field(ret, 1) = caml_copy_double(geo_coord.lng);
@@ -76,21 +92,17 @@ CAMLprim value caml_cellToBoundary(value caml_h3) {
     CAMLlocal2(ret, arr);
     CellBoundary gb;
     H3Error err = cellToBoundary(Int64_val(caml_h3), &gb);
+    if (E_SUCCESS != err) {
+        caml_failwith_value(caml_copy_int64(err));
+    }
     ret = caml_alloc_tuple(2);
 
     LatLng* pro[MAX_CELL_BNDRY_VERTS];
-
-    if (err == E_SUCCESS) {
-        for (int i = 0; i < gb.numVerts; i++) {
-            pro[i] = &(gb.verts[i]);
-        }
-        for (int i = gb.numVerts; i < MAX_CELL_BNDRY_VERTS; i++) {
-            pro[i] = NULL;
-        }
-    } else {
-        for (int i = 0; i < MAX_CELL_BNDRY_VERTS; i++) {
-            pro[i] = NULL;
-        }
+    for (int i = 0; i < gb.numVerts; i++) {
+        pro[i] = &(gb.verts[i]);
+    }
+    for (int i = gb.numVerts; i < MAX_CELL_BNDRY_VERTS; i++) {
+        pro[i] = NULL;
     }
     arr = caml_alloc_array(conv, (const char **)(&pro));
 
@@ -100,20 +112,25 @@ CAMLprim value caml_cellToBoundary(value caml_h3) {
 }
 
 CAMLprim value caml_maxGridDiskSize(value caml_k) {
-    // TODO: return err
+    CAMLparam1(caml_k);
     int64_t out;
     H3Error err = maxGridDiskSize(Int_val(caml_k), &out);
-    return caml_copy_int64(out);
+    if (E_SUCCESS != err) {
+        caml_failwith_value(caml_copy_int64(err));
+    }
+    CAMLreturn(caml_copy_int64(out));
 }
 
 CAMLprim value caml_gridDisk(value caml_h3, value caml_k) {
-    // TODO: return err
     CAMLparam2(caml_h3, caml_k);
     CAMLlocal1(ret);
     int k = Int_val(caml_k);
 
     int64_t count;
     H3Error err = maxGridDiskSize(k, &count);
+    if (E_SUCCESS != err) {
+        caml_failwith_value(caml_copy_int64(err));
+    }
 
     H3Index* rings = (H3Index*)calloc(count, sizeof(H3Index));
     err = gridDisk(Int64_val(caml_h3), k, rings);
@@ -126,13 +143,15 @@ CAMLprim value caml_gridDisk(value caml_h3, value caml_k) {
 }
 
 CAMLprim value caml_gridDiskDistances(value caml_h3, value caml_k) {
-    // TODO: return err
     CAMLparam2(caml_h3, caml_k);
     CAMLlocal3(ret, neigh, dists);
     int k = Int_val(caml_k);
 
     int64_t count;
     H3Error err = maxGridDiskSize(k, &count);
+    if (E_SUCCESS != err) {
+        caml_failwith_value(caml_copy_int64(err));
+    }
 
     H3Index* rings = (H3Index*)calloc(count, sizeof(H3Index));
     int* distances = (int*)calloc(count, sizeof(int));
@@ -153,23 +172,31 @@ CAMLprim value caml_gridDiskDistances(value caml_h3, value caml_k) {
 }
 
 CAMLprim value caml_getResolution(value v_h) {
-    return Val_int(getResolution(Int64_val(v_h)));
+    CAMLparam1(v_h);
+    CAMLreturn(Val_int(getResolution(Int64_val(v_h))));
 }
 
 CAMLprim value caml_getBaseCellNumber(value v_h) {
-    return Val_int(getBaseCellNumber(Int64_val(v_h)));
+    CAMLparam1(v_h);
+    CAMLreturn(Val_int(getBaseCellNumber(Int64_val(v_h))));
 }
 
 CAMLprim value caml_stringToH3(value v_str) {
-    // TODO: return err
+    CAMLparam1(v_str);
     H3Index idx;
     H3Error err = stringToH3(String_val(v_str), &idx);
-    return caml_copy_int64(idx);
+    if (E_SUCCESS != err) {
+        caml_failwith_value(caml_copy_int64(err));
+    }
+    CAMLreturn(caml_copy_int64(idx));
 }
 
 CAMLprim value caml_areNeighborCells(value v_origin, value v_destination) {
-    // TODO: return err
+    CAMLparam2(v_origin, v_destination);
     int res;
     H3Error err = areNeighborCells(Int64_val(v_origin), Int64_val(v_destination), &res);
-    return Val_int(res);
+    if (E_SUCCESS != err) {
+        caml_failwith_value(caml_copy_int64(err));
+    }
+    CAMLreturn(Val_int(res));
 }
