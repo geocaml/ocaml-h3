@@ -6,11 +6,6 @@ type lat_lng = {
     lon: float
 }
 
-type cell_boundary = {
-    num_verts: int;
-    verts: lat_lng array
-}
-
 type geo_fence = {
     num_verts : int;
     verts : lat_lng array
@@ -27,7 +22,7 @@ external rads_to_degs : float -> float = "caml_radsToDegs"
 external is_valid_cell : h3_index -> int = "caml_isValidCell"
 external lat_lng_to_cell : float -> float -> int -> h3_index = "caml_latLngToCell"
 external cell_to_lat_lng : h3_index -> float * float = "caml_cellToLatLng"
-external cell_to_boundary : h3_index -> cell_boundary = "caml_cellToBoundary"
+external cell_to_boundary : h3_index -> lat_lng array = "caml_cellToBoundary"
 external max_grid_disk_size : int -> int64 = "caml_maxGridDiskSize"
 external grid_disk : h3_index -> int -> h3_index array = "caml_gridDisk"
 external grid_disk_distances : h3_index -> int -> h3_index array * int array = "caml_gridDiskDistances"

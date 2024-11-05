@@ -28,7 +28,7 @@ CAMLprim value caml_getHexagonAreaAvgKm2(value caml_res) {
     double out;
     H3Error err = getHexagonAreaAvgKm2(Int_val(caml_res), &out);
     if (E_SUCCESS != err) {
-        caml_failwith_value(caml_copy_int64(err));
+        caml_failwith_value(Val_int(err));
     }
     CAMLreturn(caml_copy_double(out));
 }
@@ -38,7 +38,7 @@ CAMLprim value caml_cellAreaKm2(value caml_h3) {
     double out;
     H3Error err = cellAreaKm2(Int64_val(caml_h3), &out);
     if (E_SUCCESS != err) {
-        caml_failwith_value(caml_copy_int64(err));
+        caml_failwith_value(Val_int(err));
     }
     CAMLreturn(caml_copy_double(out));
 }
@@ -57,7 +57,7 @@ CAMLprim value caml_latLngToCell(value caml_lat, value caml_lon, value caml_res)
     };
     H3Error err = latLngToCell(&geo_coord, Int_val(caml_res), &out);
     if (E_SUCCESS != err) {
-        caml_failwith_value(caml_copy_int64(err));
+        caml_failwith_value(Val_int(err));
     }
     CAMLreturn(caml_copy_int64(out));
 }
@@ -68,7 +68,7 @@ CAMLprim value caml_cellToLatLng(value caml_h3) {
     LatLng geo_coord = {.lat = 0.0, .lng = 0.0};
     H3Error err = cellToLatLng(Int64_val(caml_h3), &geo_coord);
     if (E_SUCCESS != err) {
-        caml_failwith_value(caml_copy_int64(err));
+        caml_failwith_value(Val_int(err));
     }
     ret = caml_alloc_tuple(2);
     Field(ret, 0) = caml_copy_double(geo_coord.lat);
@@ -87,15 +87,13 @@ CAMLprim value conv(char const *arrayval) {
 }
 
 CAMLprim value caml_cellToBoundary(value caml_h3) {
-    // TODO: return err
     CAMLparam1(caml_h3);
-    CAMLlocal2(ret, arr);
+    CAMLlocal1(arr);
     CellBoundary gb;
     H3Error err = cellToBoundary(Int64_val(caml_h3), &gb);
     if (E_SUCCESS != err) {
-        caml_failwith_value(caml_copy_int64(err));
+        caml_failwith_value(Val_int(err));
     }
-    ret = caml_alloc_tuple(2);
 
     LatLng* pro[MAX_CELL_BNDRY_VERTS];
     for (int i = 0; i < gb.numVerts; i++) {
@@ -105,10 +103,7 @@ CAMLprim value caml_cellToBoundary(value caml_h3) {
         pro[i] = NULL;
     }
     arr = caml_alloc_array(conv, (const char **)(&pro));
-
-    Field(ret, 0) = err == E_SUCCESS ? Val_int(gb.numVerts) : 0;
-    Field(ret, 1) = arr;
-    CAMLreturn(ret);
+    CAMLreturn(arr);
 }
 
 CAMLprim value caml_maxGridDiskSize(value caml_k) {
@@ -116,7 +111,7 @@ CAMLprim value caml_maxGridDiskSize(value caml_k) {
     int64_t out;
     H3Error err = maxGridDiskSize(Int_val(caml_k), &out);
     if (E_SUCCESS != err) {
-        caml_failwith_value(caml_copy_int64(err));
+        caml_failwith_value(Val_int(err));
     }
     CAMLreturn(caml_copy_int64(out));
 }
@@ -129,7 +124,7 @@ CAMLprim value caml_gridDisk(value caml_h3, value caml_k) {
     int64_t count;
     H3Error err = maxGridDiskSize(k, &count);
     if (E_SUCCESS != err) {
-        caml_failwith_value(caml_copy_int64(err));
+        caml_failwith_value(Val_int(err));
     }
 
     H3Index* rings = (H3Index*)calloc(count, sizeof(H3Index));
@@ -150,7 +145,7 @@ CAMLprim value caml_gridDiskDistances(value caml_h3, value caml_k) {
     int64_t count;
     H3Error err = maxGridDiskSize(k, &count);
     if (E_SUCCESS != err) {
-        caml_failwith_value(caml_copy_int64(err));
+        caml_failwith_value(Val_int(err));
     }
 
     H3Index* rings = (H3Index*)calloc(count, sizeof(H3Index));
@@ -186,7 +181,7 @@ CAMLprim value caml_stringToH3(value v_str) {
     H3Index idx;
     H3Error err = stringToH3(String_val(v_str), &idx);
     if (E_SUCCESS != err) {
-        caml_failwith_value(caml_copy_int64(err));
+        caml_failwith_value(Val_int(err));
     }
     CAMLreturn(caml_copy_int64(idx));
 }
@@ -196,7 +191,7 @@ CAMLprim value caml_areNeighborCells(value v_origin, value v_destination) {
     int res;
     H3Error err = areNeighborCells(Int64_val(v_origin), Int64_val(v_destination), &res);
     if (E_SUCCESS != err) {
-        caml_failwith_value(caml_copy_int64(err));
+        caml_failwith_value(Val_int(err));
     }
     CAMLreturn(Val_int(res));
 }
