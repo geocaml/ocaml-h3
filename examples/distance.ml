@@ -13,8 +13,8 @@ let () =
     let uber_h3HQ1 = H3.string_to_h3 "8f2830828052d25" in
     let uber_h3HQ2 = H3.string_to_h3 "8f283082a30e623" in
 
-    let hq1_lat, hq1_lon = H3.h3_to_geo uber_h3HQ1 in
-    let hq2_lat, hq2_lon = H3.h3_to_geo uber_h3HQ2 in
+    let hq1_lat, hq1_lon = H3.cell_to_lat_lng uber_h3HQ1 in
+    let hq2_lat, hq2_lon = H3.cell_to_lat_lng uber_h3HQ2 in
 
     printf "origin: (%f, %f)\n" (H3.rads_to_degs hq1_lat) (H3.rads_to_degs hq1_lon);
     printf "destination: (%f, %f)\n" (H3.rads_to_degs hq2_lat) (H3.rads_to_degs hq2_lon);
@@ -27,4 +27,3 @@ origin: (37.775236, 237.580245)
 destination: (37.789991, 237.597879)
 distance: 2.256853km
 *)
-
