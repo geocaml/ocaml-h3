@@ -1,7 +1,0 @@
-B ../_build/default/examples/.distance.eobjs
-B ../_build/default/examples/.index.eobjs
-B ../_build/default/examples/.simple.eobjs
-B ../_build/default/src/.h3.objs
-FLG -w -40 -w -40 -w -40
-S .
-S ../src
