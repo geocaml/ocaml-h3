@@ -1,0 +1,51 @@
+name: Builds, tests & co
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions: read-all
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+        ocaml-compiler:
+          - 5.2.0
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Install H3
+        run: |
+          sudo apt-get update -qqy
+          sudo apt-get install -y git cmake make gcc libtool
+          git clone https://github.com/uber/h3.git
+          cd h3
+          git checkout v4.1.0
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE=ON ..
+          cmake --build .
+          sudo cmake --build . --target install
+
+      - name: Checkout tree
+        uses: actions/checkout@v4
+
+      - name: Set-up OCaml ${{ matrix.ocaml-compiler }}
+        uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: ${{ matrix.ocaml-compiler }}
+
+      - run: opam install . --deps-only --with-test
+
+      - run: opam exec -- dune build
+
+      - run: opam exec -- dune runtest
+
+      # - run: opam exec -- dune build @doc

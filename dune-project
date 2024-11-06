@@ -11,7 +11,7 @@
 
 (maintainers "Travis Brady <travis.brady@gmail.com>")
 
-(license MIT)
+(license "Apache V2")
 
 (documentation https://url/to/documentation)
 
