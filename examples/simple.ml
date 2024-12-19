@@ -11,8 +11,8 @@ let () =
     let testo = H3.lat_lng_to_cell (d2r 40.689167) (d2r (-74.044444)) 5 in
     printf "Testo: %Lx\n" testo;
     let austin_geo_out = H3.cell_to_lat_lng austin in
-    printf "Austin Out Lat: %f Lon: %f\n" (fst austin_geo_out) (snd austin_geo_out);
-    printf "Austin Out Lat: %f Lon: %f\n" (H3.rads_to_degs (fst austin_geo_out)) (H3.rads_to_degs (snd austin_geo_out));
+    printf "Austin Out Lat: %f Lon: %f\n" austin_geo_out.lat austin_geo_out.lon;
+    printf "Austin Out Lat: %f Lon: %f\n" (H3.rads_to_degs austin_geo_out.lat) (H3.rads_to_degs austin_geo_out.lon);
     let verts = H3.cell_to_boundary austin in
     printf "Austin GB num_verts: %d\n" (Array.length verts);
     Array.iter (fun (v : H3.lat_lng) -> printf "%f %f\n" v.lat v.lon) verts;

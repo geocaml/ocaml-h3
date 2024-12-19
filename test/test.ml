@@ -38,8 +38,8 @@ let test_cell_to_lat_lng () =
     ((lat -. 22.3204847179) < 0.0001) && ((lon -. 169.7200239903) < 0.0001)
     *)
     let x = Scanf.sscanf "845ad1bffffffff" "%Lx" (fun s -> s) in
-    let lat, lon = H3.cell_to_lat_lng x in
-    let lat, lon = H3.rads_to_degs lat, H3.rads_to_degs lon in
+    let loc = H3.cell_to_lat_lng x in
+    let lat, lon = H3.rads_to_degs loc.lat, H3.rads_to_degs loc.lon in
     Alcotest.(check (float 0.0001)) "check h3_to_geo lat" 22.3204847179 lat;
     Alcotest.(check (float 0.0001)) "check h3_to_geo lon" 169.7200239903 lon
 

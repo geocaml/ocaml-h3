@@ -15,8 +15,8 @@ let () =
         (fun i x -> printf "Boundary vertex #%d: %f, %f\n" i (r2d x.H3.lat) (r2d x.H3.lon))
         boundary;
 
-    let center_lat, center_lon = H3.cell_to_lat_lng indexed in
-    printf "Center coordinates: %f, %f\n" (r2d center_lat) (r2d center_lon)
+    let center = H3.cell_to_lat_lng indexed in
+    printf "Center coordinates: %f, %f\n" (r2d center.lat) (r2d center.lon)
 
 (*
  * C output:

@@ -70,9 +70,9 @@ CAMLprim value caml_cellToLatLng(value caml_h3) {
     if (E_SUCCESS != err) {
         caml_failwith_value(Val_int(err));
     }
-    ret = caml_alloc_tuple(2);
-    Field(ret, 0) = caml_copy_double(geo_coord.lat);
-    Field(ret, 1) = caml_copy_double(geo_coord.lng);
+    ret = caml_alloc(2, Double_tag);
+    Store_double_field(ret, 0, geo_coord.lat);
+    Store_double_field(ret, 1, geo_coord.lng);
     CAMLreturn(ret);
 }
 
@@ -80,7 +80,7 @@ CAMLprim value conv(char const *arrayval) {
     CAMLparam0 ();
     CAMLlocal1(ret);
     LatLng *coord = (LatLng*)arrayval;
-    ret = caml_alloc_tuple(2);
+    ret = caml_alloc(2, Double_tag);
     Store_double_field(ret, 0, coord->lat);
     Store_double_field(ret, 1, coord->lng);
     CAMLreturn(ret);
@@ -94,15 +94,17 @@ CAMLprim value caml_cellToBoundary(value caml_h3) {
     if (E_SUCCESS != err) {
         caml_failwith_value(Val_int(err));
     }
+    if (gb.numVerts >= MAX_CELL_BNDRY_VERTS) {
+        caml_failwith("H3 returned too much data");
+    }
 
-    LatLng* pro[MAX_CELL_BNDRY_VERTS];
+    int max_count_plus_null = MAX_CELL_BNDRY_VERTS + 1;
+    LatLng* values[max_count_plus_null];
+    bzero(&values, max_count_plus_null * sizeof(LatLng*)); 
     for (int i = 0; i < gb.numVerts; i++) {
-        pro[i] = &(gb.verts[i]);
+        values[i] = &(gb.verts[i]);
     }
-    for (int i = gb.numVerts; i < MAX_CELL_BNDRY_VERTS; i++) {
-        pro[i] = NULL;
-    }
-    arr = caml_alloc_array(conv, (const char **)(&pro));
+    arr = caml_alloc_array(conv, (const char **)(&values));
     CAMLreturn(arr);
 }
 
