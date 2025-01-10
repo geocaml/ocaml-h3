@@ -1,6 +1,6 @@
 # ocaml-h3: OCaml bindings to Uber's H3 geospatial indexing system
 
-![build status](https://github.com/mdales/ocaml-h3/.github/workflows/main.yml/badge.svg)
+![build status](https://github.com/mdales/ocaml-h3/actions/workflows/main.yml/badge.svg)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 ### Summary
