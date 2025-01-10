@@ -4,7 +4,7 @@ synopsis: ""
 description: ""
 maintainer: ["Travis Brady <travis.brady@gmail.com>"]
 authors: ["Travis Brady <travis.brady@gmail.com>"]
-license: "MIT"
+license: "Apache V2"
 tags: ["image" "gif" "bitmap"]
 homepage: "https://github.com/travisbrady/ocaml-h3"
 doc: "https://url/to/documentation"
