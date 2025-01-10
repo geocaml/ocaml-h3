@@ -6,17 +6,17 @@ let () =
     let lat = H3.degs_to_rads 40.689167 in
     let lon = H3.degs_to_rads (-74.044444) in
     let resolution = 10 in
-    let indexed = H3.geo_to_h3 lat lon resolution in
+    let indexed = H3.lat_lng_to_cell lat lon resolution in
     printf "The index is: %Lx\n" indexed;
 
     (* Get the vertices of the H3 index *)
-    let boundary = H3.h3_to_geo_boundary indexed in
+    let boundary = H3.cell_to_boundary indexed in
     Array.iteri
         (fun i x -> printf "Boundary vertex #%d: %f, %f\n" i (r2d x.H3.lat) (r2d x.H3.lon))
-        boundary.H3.verts;
+        boundary;
 
-    let center_lat, center_lon = H3.h3_to_geo indexed in
-    printf "Center coordinates: %f, %f\n" (r2d center_lat) (r2d center_lon)
+    let center = H3.cell_to_lat_lng indexed in
+    printf "Center coordinates: %f, %f\n" (r2d center.lat) (r2d center.lon)
 
 (*
  * C output:
