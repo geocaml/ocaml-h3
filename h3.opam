@@ -2,10 +2,13 @@
 opam-version: "2.0"
 synopsis: "An OCaml wrapper for the H3 geospatial library."
 description: "A thin OCaml wrapper for Uber's H3 geospatial library system."
-maintainer: [""Michael Dales <michael@digitalflapjack.com>"]
-authors: ["Travis Brady <travis.brady@gmail.com>", "Michael Dales <michael@digitalflapjack.com>"]
+maintainer: ["Michael Dales <michael@digitalflapjack.com>"]
+authors: [
+  "Travis Brady <travis.brady@gmail.com>"
+  "Michael Dales <michael@digitalflapjack.com>"
+]
 license: "Apache V2"
-tags: ["H3", "geospatial"]
+tags: ["H3" "geospatial"]
 homepage: "https://github.com/mdales/ocaml-h3"
 doc: "https://github.com/mdales/ocaml-h3"
 bug-reports: "https://github.com/mdales/ocaml-h3/issues"
