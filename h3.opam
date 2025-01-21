@@ -9,9 +9,9 @@ authors: [
 ]
 license: "Apache V2"
 tags: ["H3" "geospatial"]
-homepage: "https://github.com/mdales/ocaml-h3"
-doc: "https://github.com/mdales/ocaml-h3"
-bug-reports: "https://github.com/mdales/ocaml-h3/issues"
+homepage: "https://github.com/geocaml/ocaml-h3"
+doc: "https://github.com/geocaml/ocaml-h3"
+bug-reports: "https://github.com/geocaml/ocaml-h3/issues"
 depends: [
   "dune" {>= "3.14"}
   "ocaml"
@@ -32,4 +32,4 @@ build: [
     "@doc" {with-doc}
   ]
 ]
-dev-repo: "git+https://github.com/mdales/ocaml-h3.git"
+dev-repo: "git+https://github.com/geocaml/ocaml-h3.git"

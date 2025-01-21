@@ -5,15 +5,17 @@
 (generate_opam_files true)
 
 (source
- (github mdales/ocaml-h3))
+ (github geocaml/ocaml-h3))
 
-(authors "Travis Brady <travis.brady@gmail.com>" "Michael Dales <michael@digitalflapjack.com>")
+(authors
+  "Travis Brady <travis.brady@gmail.com>"
+  "Michael Dales <michael@digitalflapjack.com>")
 
 (maintainers "Michael Dales <michael@digitalflapjack.com>")
 
 (license "Apache V2")
 
-(documentation https://github.com/mdales/ocaml-h3)
+(documentation https://github.com/geocaml/ocaml-h3)
 
 (package
  (name h3)

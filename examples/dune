@@ -1,17 +1,17 @@
 (executable
-  (name simple)
-   (public_name simple)
-   (libraries h3)
-   (modules simple))
+ (name simple)
+ (public_name simple)
+ (libraries h3)
+ (modules simple))
 
 (executable
-  (name index)
-   (public_name index)
-   (libraries h3)
-   (modules index))
+ (name index)
+ (public_name index)
+ (libraries h3)
+ (modules index))
 
 (executable
-  (name distance)
-   (public_name distance)
-   (libraries h3)
-   (modules distance))
+ (name distance)
+ (public_name distance)
+ (libraries h3)
+ (modules distance))
