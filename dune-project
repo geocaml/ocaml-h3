@@ -21,6 +21,6 @@
  (name h3)
  (synopsis "An OCaml wrapper for the H3 geospatial library.")
  (description "A thin OCaml wrapper for Uber's H3 geospatial library system.")
- (depends ocaml alcotest)
+ (depends ocaml alcotest odoc)
  (tags
   (H3 geospatial)))
