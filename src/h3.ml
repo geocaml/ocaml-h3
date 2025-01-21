@@ -1,11 +1,7 @@
-
 type h3_index = int64
 (** Identifier for an object (cell, edge, etc) in the H3 system. *)
 
-type lat_lng = {
-    lat: float;
-    lon: float
-}
+type lat_lng = { lat : float; lng : float }
 (** Type to store latitude/longitude in radians *)
 
 external degs_to_rads : float -> float = "caml_degsToRads"
@@ -17,7 +13,7 @@ external rads_to_degs : float -> float = "caml_radsToDegs"
 external is_valid_cell : h3_index -> int = "caml_isValidCell"
 (** confirms if an h3_index is a valid cell (hexagon or pentagon) *)
 
-external lat_lng_to_cell : float -> float -> int -> h3_index = "caml_latLngToCell"
+external lat_lng_to_cell : lat_lng -> int -> h3_index = "caml_latLngToCell"
 (** find the H3 index of the resolution res cell containing the lat/lng *)
 
 external cell_to_lat_lng : h3_index -> lat_lng = "caml_cellToLatLng"
@@ -32,7 +28,8 @@ external max_grid_disk_size : int -> int64 = "caml_maxGridDiskSize"
 external grid_disk : h3_index -> int -> h3_index array = "caml_gridDisk"
 (** hexagon neighbors in all directions *)
 
-external grid_disk_distances : h3_index -> int -> h3_index array * int array = "caml_gridDiskDistances"
+external grid_disk_distances : h3_index -> int -> h3_index array * int array
+  = "caml_gridDiskDistances"
 (** hexagon neighbors in all directions, reporting distance from origin *)
 
 external get_resolution : h3_index -> int = "caml_getResolution"
@@ -50,9 +47,10 @@ external get_hexagon_area_avg_km2 : int -> float = "caml_getHexagonAreaAvgKm2"
 external cell_area_km2 : h3_index -> float = "caml_cellAreaKm2"
 (** exact area for a specific cell (hexagon or pentagon) in kilometers^2 *)
 
-external are_neighbor_cells : h3_index -> h3_index -> int = "caml_areNeighborCells"
+external are_neighbor_cells : h3_index -> h3_index -> int
+  = "caml_areNeighborCells"
 (** returns whether or not the provided hexagons border *)
 
-let geo_coord_to_cell gc =
-    lat_lng_to_cell (degs_to_rads gc.lat) (degs_to_rads gc.lon)
 (** converts a lat/lng pair from degrees to radians *)
+let geo_coord_to_cell gc =
+  lat_lng_to_cell { lat = degs_to_rads gc.lat; lng = degs_to_rads gc.lng }

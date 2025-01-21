@@ -48,12 +48,12 @@ CAMLprim value caml_isValidCell(value caml_h3) {
     CAMLreturn(Val_int(isValidCell(Int64_val(caml_h3))));
 }
 
-CAMLprim value caml_latLngToCell(value caml_lat, value caml_lon, value caml_res) {
-    CAMLparam3(caml_lat, caml_lon, caml_res);
+CAMLprim value caml_latLngToCell(value caml_latlon, value caml_res) {
+    CAMLparam2(caml_latlon, caml_res);
     H3Index out;
     LatLng geo_coord = {
-        .lat = Double_val(caml_lat),
-        .lng = Double_val(caml_lon)
+        .lat = Double_field(caml_latlon, 0),
+        .lng = Double_field(caml_latlon, 1),
     };
     H3Error err = latLngToCell(&geo_coord, Int_val(caml_res), &out);
     if (E_SUCCESS != err) {
