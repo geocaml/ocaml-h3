@@ -23,7 +23,7 @@ $ dune utop src
 Then within utop
 
 ```ocaml
-utop # let paris = {H3.lat=48.8566; H3.lon=2.3522};;
+utop # let paris = {H3.lat=48.8566; H3.lng=2.3522};;
 val paris : H3.lat_lng = {H3.lat = 48.8566; lng = 2.3522}
 
 utop # let paris_h3 = H3.cell_of_lat_lng paris 9;;
