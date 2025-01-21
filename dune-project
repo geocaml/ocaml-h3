@@ -13,13 +13,13 @@
 
 (maintainers "Michael Dales <michael@digitalflapjack.com>")
 
-(license "Apache V2")
+(license "Apache-2.0")
 
 (documentation https://github.com/geocaml/ocaml-h3)
 
 (package
  (name h3)
- (synopsis "An OCaml wrapper for the H3 geospatial library.")
+ (synopsis "An OCaml wrapper for the H3 geospatial library")
  (description "A thin OCaml wrapper for Uber's H3 geospatial library system.")
  (depends ocaml alcotest odoc)
  (tags
