@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <h3/h3api.h>
+#include <h3api.h>
 
 #include <caml/alloc.h>
 #include <caml/callback.h>
