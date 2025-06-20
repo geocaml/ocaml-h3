@@ -4,6 +4,7 @@
  (foreign_stubs
   (language c)
   (names h3_stubs)
-  (flags (-I/opt/homebrew/include/h3 -fPIC))
-  )
- (c_library_flags (-lh3 -L/opt/homebrew/lib)))
+  (flags
+   (-I/opt/homebrew/include/h3 -fPIC)))
+ (c_library_flags
+  (-lh3 -L/opt/homebrew/lib)))
