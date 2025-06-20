@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <h3/h3api.h>
+#include <h3api.h>
 
 #include <caml/alloc.h>
 #include <caml/callback.h>
@@ -100,7 +100,7 @@ CAMLprim value caml_cellToBoundary(value caml_h3) {
 
     int max_count_plus_null = MAX_CELL_BNDRY_VERTS + 1;
     LatLng* values[max_count_plus_null];
-    bzero(&values, max_count_plus_null * sizeof(LatLng*)); 
+    bzero(&values, max_count_plus_null * sizeof(LatLng*));
     for (int i = 0; i < gb.numVerts; i++) {
         values[i] = &(gb.verts[i]);
     }
