@@ -1,4 +1,0 @@
-depexts: [
-  ["libh3-dev"] {os-family = "ubuntu"}
-  ["h3"] {os = "macos" & os-distribution = "homebrew"}
-]

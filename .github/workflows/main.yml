@@ -27,7 +27,7 @@ jobs:
           sudo apt-get install -y git cmake make gcc libtool
           git clone https://github.com/uber/h3.git
           cd h3
-          git checkout v4.1.0
+          git checkout v4.3.0
           mkdir build
           cd build
           cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE=ON ..
